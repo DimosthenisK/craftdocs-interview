@@ -35,6 +35,12 @@ export class EcsCdkConstruct extends Construct {
         "Security group for Craftdocs ECS (Elastic Container Service)",
     });
 
+    ec.securityGroup.addIngressRule(
+      securityGroup,
+      ec2.Port.tcp(6379),
+      "Allow Redis access from ECS"
+    );
+
     const taskDefinition = new ecs.FargateTaskDefinition(
       this,
       "craftdocs-ecs-task-definition",
@@ -106,6 +112,12 @@ export class EcsCdkConstruct extends Construct {
       elb.alb,
       ec2.Port.tcp(80),
       "Allow traffic from ELB"
+    );
+
+    service.connections.allowTo(
+      ec.securityGroup,
+      ec2.Port.tcp(6379),
+      "Allow traffic to redis"
     );
 
     elb.listener.addTargets("craftdocs-ecs-targets", {

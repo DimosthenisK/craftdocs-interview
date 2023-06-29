@@ -9,6 +9,7 @@ interface EcProps {
 
 export class EcCdkConstruct extends Construct {
   public readonly cluster: ec.CfnCacheCluster;
+  public readonly securityGroup: ec2.SecurityGroup;
 
   constructor(scope: Construct, id: string, { vpc }: EcProps) {
     super(scope, id);
@@ -25,7 +26,7 @@ export class EcCdkConstruct extends Construct {
       "craftdocs-ec-subnet-group",
       {
         description: "Subnet group for craftdocs EC (ElastiCache)",
-        subnetIds: vpc.publicSubnets.map((subnet) => subnet.subnetId),
+        subnetIds: vpc.privateSubnets.map((subnet) => subnet.subnetId),
         cacheSubnetGroupName: "craftdocs-ec-subnet-group",
       }
     );
@@ -43,5 +44,6 @@ export class EcCdkConstruct extends Construct {
     cluster.addDependency(subnetGroup);
 
     this.cluster = cluster;
+    this.securityGroup = securityGroup;
   }
 }
