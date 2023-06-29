@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { PrismaService } from './prisma/prisma.service';
+import { RedisIoAdapter } from './app/lib';
 import { appValidationPipe } from './app/pipes';
 import { useContainer } from 'class-validator';
 
@@ -15,6 +16,15 @@ async function bootstrap() {
   prismaService.enableShutdownHooks(app);
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+  const redisIoAdapter = new RedisIoAdapter(app);
+  await redisIoAdapter.connectToRedis(
+    `redis://${configService.get('REDIS_URL')}:${configService.get(
+      'REDIS_PORT',
+    )}`,
+  );
+
+  app.useWebSocketAdapter(redisIoAdapter);
 
   const config = new DocumentBuilder()
     .setTitle('Craft Docs')
