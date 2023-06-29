@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Document {
+    id String @unique @default(nanoid())
+
+    content String
+
+    owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    ownerId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    subscriptions DocumentSubscription[]
+}
+
+model DocumentSubscription {
+    id String @unique @default(nanoid())
+
+    lastSync DateTime @default(now())
+
+    document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    documentId String
+    userId     String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    @@unique([documentId, userId])
+}
+
+model User {
+    id String @unique @default(nanoid())
+
+    name String @unique // To support anonymous users
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    subscriptions DocumentSubscription[]
+    Document      Document[]
+}
