@@ -1,11 +1,11 @@
-import { Module } from '@nestjs/common';
-import { DocumentService } from './document.service';
 import { DocumentController } from './document.controller';
-import { SubscriptionModule } from './subscription/subscription.module';
+import { DocumentService } from './document.service';
+import { DocumentSubscriptionModule } from './subscription/document-subscription.module';
+import { Module } from '@nestjs/common';
 
 @Module({
   controllers: [DocumentController],
   providers: [DocumentService],
-  imports: [SubscriptionModule]
+  imports: [DocumentSubscriptionModule],
 })
 export class DocumentModule {}
