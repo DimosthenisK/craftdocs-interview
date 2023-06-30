@@ -2,8 +2,8 @@ import * as cdk from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import * as path from "path";
 import * as sm from "aws-cdk-lib/aws-secretsmanager";
+import * as path from "path";
 
 import { DockerImageAsset, Platform } from "aws-cdk-lib/aws-ecr-assets";
 
@@ -75,6 +75,7 @@ export class EcsCdkConstruct extends Construct {
         DATABASE_URL: this.getDatabaseUrlUnsafe(rds.cluster.secret!), // TODO: do it in a secure way
         REDIS_URL: ec.cluster.attrRedisEndpointAddress,
         REDIS_PORT: ec.cluster.attrRedisEndpointPort,
+        JWT_SECRET: "secret", // TODO: do it in a secure way
       },
     });
 
