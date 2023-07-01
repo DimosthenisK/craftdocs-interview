@@ -20,7 +20,7 @@ import { CurrentUser } from '../user/decorators';
 import { DocumentService } from './document.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
-import { DocumentEntity } from './entities/document.entity';
+import { DocumentEntity } from './entities/Document.entity';
 import { IsOwnerOfDocumentGuard } from './interceptors/is-owner-of-document.guard';
 import { IsSubscribedToDocumentGuard } from './subscription/guards/is-subscribed-to-document.guard';
 

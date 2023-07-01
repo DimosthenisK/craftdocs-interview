@@ -14,6 +14,10 @@ import { CheckTokenDto, LoginDto, TokenResponse } from './dto';
 export class AuthenticationController {
   constructor(public authenticationService: AuthenticationService) {}
 
+  /**
+   * This isn't just login - it's also user.create() because of anonymous users.
+   * In a production environment, we'd have passwords etc.
+   */
   @Post('/login')
   @HttpCode(200)
   @ApiOkResponse({ type: () => TokenResponse })

@@ -1,9 +1,9 @@
 import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 
 import { DocumentSubscription } from '@prisma/client';
-import { UserEntity } from '../../../user/entities/user.entity';
+import { UserEntity } from '../../../user/entities/User.entity';
 import { BaseEntity } from '../../../util/base.entity';
-import { DocumentEntity } from '../../entities/document.entity';
+import { DocumentEntity } from '../../entities/Document.entity';
 
 @ApiExtraModels(() => DocumentEntity, () => UserEntity)
 export class DocumentSubscriptionEntity

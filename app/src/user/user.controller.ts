@@ -4,7 +4,7 @@ import { User } from '@prisma/client';
 import { BearerAuthGuard } from './authentication/guards/bearer.guard';
 import { CurrentUser } from './decorators';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity } from './entities/User.entity';
 import { UserService } from './user.service';
 
 @ApiTags('User')
