@@ -5,10 +5,10 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 
-import { Request } from 'express';
-import { Observable } from 'rxjs';
-import { EntityNotFoundException } from '../../app/exceptions';
 import { DocumentService } from '../document.service';
+import { EntityNotFoundException } from '../../app/exceptions';
+import { Observable } from 'rxjs';
+import { Request } from 'express';
 
 @Injectable()
 export class DocumentExistsInterceptor implements NestInterceptor {
@@ -19,7 +19,7 @@ export class DocumentExistsInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest<Request>();
-    const documentId = request.params.documentId;
+    const documentId = request.params.documentId || request.body.documentId;
 
     const document = await this.documentService.findOne(documentId);
     if (!document) {

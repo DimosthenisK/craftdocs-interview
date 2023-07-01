@@ -8,7 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { BearerAuthGuard } from '../user/authentication/guards/bearer.guard';
 import { CurrentUser } from '../user/decorators';
@@ -18,6 +18,7 @@ import { UpdateDocumentDto } from './dto/update-document.dto';
 import { IsOwnerOfDocumentGuard } from './interceptors/is-owner-of-document.guard';
 import { IsSubscribedToDocumentGuard } from './subscription/guards/is-subscribed-to-document.guard';
 
+@ApiTags('Document')
 @ApiBearerAuth('bearer')
 @UseGuards(BearerAuthGuard)
 @Controller('document')
