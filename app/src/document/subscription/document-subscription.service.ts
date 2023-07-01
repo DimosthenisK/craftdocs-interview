@@ -1,26 +1,42 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDocumentSubscriptionDto } from './dto/create-document-subscription.dto';
-import { UpdateDocumentSubscriptionDto } from './dto/update-document-subscription.dto';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class DocumentSubscriptionService {
-  create(createDocumentSubscriptionDto: CreateDocumentSubscriptionDto) {
-    return 'This action adds a new documentSubscription';
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async findSubscriptionsByDocumentId(documentId: string) {
+    return this.prismaService.documentSubscription.findMany({
+      where: { documentId },
+    });
   }
 
-  findAll() {
-    return `This action returns all documentSubscription`;
+  async findSubscriptionsByUserId(userId: string) {
+    return this.prismaService.documentSubscription.findMany({
+      where: { userId },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} documentSubscription`;
+  async isSubscribedToDocument(documentId: string, userId: string) {
+    const subscription =
+      await this.prismaService.documentSubscription.findFirst({
+        where: { documentId, userId },
+      });
+    return !!subscription;
   }
 
-  update(id: number, updateDocumentSubscriptionDto: UpdateDocumentSubscriptionDto) {
-    return `This action updates a #${id} documentSubscription`;
+  async subscribeToDocument(documentId: string, userId: string) {
+    return this.prismaService.documentSubscription.create({
+      data: {
+        documentId,
+        userId,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} documentSubscription`;
+  async unsubscribeFromDocument(subscriptionId: string) {
+    return this.prismaService.documentSubscription.delete({
+      where: { id: subscriptionId },
+    });
   }
 }
