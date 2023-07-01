@@ -1,10 +1,11 @@
-import { DocumentInvitation } from '@prisma/client';
+import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 
-import { ApiProperty } from '@nestjs/swagger';
+import { DocumentInvitation } from '@prisma/client';
 import { UserEntity } from '../../../user/entities/user.entity';
 import { BaseEntity } from '../../../util/base.entity';
 import { DocumentEntity } from '../../entities/document.entity';
 
+@ApiExtraModels(() => DocumentEntity, () => UserEntity)
 export class DocumentInvitationEntity
   extends BaseEntity
   implements DocumentInvitation
