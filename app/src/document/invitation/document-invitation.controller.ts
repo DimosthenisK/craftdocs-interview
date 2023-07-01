@@ -45,7 +45,7 @@ export class DocumentInvitationController {
     );
   }
 
-  @Patch(':invitationId')
+  @Patch(':invitationId/accept')
   @UseInterceptors(
     DocumentExistsInterceptor,
     DocumentInvitationExistsInterceptor,
