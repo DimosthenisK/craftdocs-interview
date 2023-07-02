@@ -1,8 +1,8 @@
+import { CreateDocumentDto } from './dto/create-document.dto';
+import { DocumentSubscriptionService } from './subscription/document-subscription.service';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
-import { DocumentSubscriptionService } from './subscription/document-subscription.service';
 
 @Injectable()
 export class DocumentService {
@@ -28,14 +28,24 @@ export class DocumentService {
     return this.prismaService.document.findUnique({ where: { id } });
   }
 
-  update(id: string, updateDocumentDto: UpdateDocumentDto) {
-    return this.prismaService.document.update({
+  async update(id: string, updateDocumentDto: UpdateDocumentDto) {
+    const document = await this.prismaService.document.update({
       where: { id },
       data: updateDocumentDto,
     });
+
+    this.documentSubscriptionService.broadcastDocumentUpdate(id);
+
+    return document;
   }
 
-  remove(id: string) {
-    return this.prismaService.document.delete({ where: { id } });
+  async remove(id: string) {
+    const document = await this.prismaService.document.delete({
+      where: { id },
+    });
+
+    await this.documentSubscriptionService.unsubscribeFromDocument(document.id);
+
+    return document;
   }
 }

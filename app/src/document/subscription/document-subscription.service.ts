@@ -1,9 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { DocumentSubscriptionGateway } from './document-subscription.gateway';
 
 @Injectable()
 export class DocumentSubscriptionService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    @Inject(forwardRef(() => DocumentSubscriptionGateway))
+    private readonly documentSubscriptionGateway: DocumentSubscriptionGateway,
+  ) {}
 
   async findSubscriptionsByDocumentId(documentId: string) {
     return this.prismaService.documentSubscription.findMany({
@@ -38,5 +43,9 @@ export class DocumentSubscriptionService {
     return this.prismaService.documentSubscription.delete({
       where: { id: subscriptionId },
     });
+  }
+
+  broadcastDocumentUpdate(documentId: string) {
+    this.documentSubscriptionGateway.acknowledgeChange(documentId);
   }
 }
