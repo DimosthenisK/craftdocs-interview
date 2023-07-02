@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserController (e2e) PATCH /user should not update the currently logged in user if the name is too long 1`] = `"VALIDATION_EXCEPTION"`;
+
+exports[`UserController (e2e) PATCH /user should not work if the user isnt logged in 1`] = `undefined`;
