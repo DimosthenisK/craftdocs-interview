@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true }),
     CacheModule.register({ isGlobal: true }),
+
     UserModule,
     DocumentModule,
   ],

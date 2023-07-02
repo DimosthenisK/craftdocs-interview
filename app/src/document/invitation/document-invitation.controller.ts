@@ -20,6 +20,7 @@ import { IsOwnerOfDocumentGuard } from '../interceptors/is-owner-of-document.gua
 import { DocumentInvitationService } from './document-invitation.service';
 import { InviteUserDto } from './dto/invite-user.dto';
 import { DocumentInvitationEntity } from './entities/DocumentInvitation.entity';
+import { IsOwnDocumentInvitationGuard } from './guards/is-own-document-invitation.guard';
 import { DocumentInvitationExistsInterceptor } from './interceptors/document-invitation-exists.interceptor';
 
 @ApiTags('Document')
@@ -50,7 +51,7 @@ export class DocumentInvitationController {
     DocumentExistsInterceptor,
     DocumentInvitationExistsInterceptor,
   )
-  @UseGuards(IsOwnerOfDocumentGuard)
+  @UseGuards(IsOwnDocumentInvitationGuard)
   @ApiOkResponse({ type: DocumentInvitationEntity })
   async acceptInvitation(@Param('invitationId') invitationId: string) {
     return this.documentInvitationService.acceptInvitationToDocument(

@@ -1,5 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 
+import { ConfigService } from '@nestjs/config';
 import { DocumentController } from './document.controller';
 import { DocumentExistsInterceptor } from './interceptors/document-exists.interceptor';
 import { DocumentInvitationController } from './invitation/document-invitation.controller';
@@ -11,10 +12,19 @@ import { DocumentSubscriptionService } from './subscription/document-subscriptio
 import { IsOwnDocumentInvitationGuard } from './invitation/guards/is-own-document-invitation.guard';
 import { IsOwnerOfDocumentGuard } from './interceptors/is-owner-of-document.guard';
 import { IsSubscribedToDocumentGuard } from './subscription/guards/is-subscribed-to-document.guard';
+import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [forwardRef(() => UserModule)],
+  imports: [
+    forwardRef(() => UserModule),
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+      }),
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [DocumentController, DocumentInvitationController],
   providers: [
     DocumentService,

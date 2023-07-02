@@ -5,9 +5,9 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 
-import { Request } from 'express';
-import { Observable } from 'rxjs';
 import { EntityNotFoundException } from '../../app/exceptions';
+import { Observable } from 'rxjs';
+import { Request } from 'express';
 import { UserService } from '../user.service';
 
 @Injectable()
@@ -23,7 +23,9 @@ export class UserExistsInterceptor implements NestInterceptor {
 
     const user = await this.userService.findOne(userId);
     if (!user) {
-      throw new EntityNotFoundException({ entity: 'User' });
+      throw new EntityNotFoundException({
+        entity: 'User',
+      });
     }
 
     return next.handle();

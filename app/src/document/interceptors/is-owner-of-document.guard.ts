@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
 import { AuthenticatedRequest } from '../../app/types';
 import { DocumentService } from '../document.service';
+import { ForbiddenException } from '../../app/exceptions';
 
 @Injectable()
 export class IsOwnerOfDocumentGuard implements CanActivate {
@@ -14,6 +15,9 @@ export class IsOwnerOfDocumentGuard implements CanActivate {
     const documentId = request.params.documentId;
     const document = await this.documentService.findOne(documentId);
 
-    return document.ownerId === user.id;
+    if (document.ownerId !== user.id)
+      throw new ForbiddenException({ entity: 'Document' });
+
+    return true;
   }
 }
