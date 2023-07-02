@@ -31,18 +31,29 @@ export class DocumentSubscriptionService {
   }
 
   async subscribeToDocument(documentId: string, userId: string) {
-    return this.prismaService.documentSubscription.create({
+    const subscription = await this.prismaService.documentSubscription.create({
       data: {
         documentId,
         userId,
       },
     });
+
+    this.documentSubscriptionGateway.subscribeToDocument(userId, documentId);
+
+    return subscription;
   }
 
   async unsubscribeFromDocument(subscriptionId: string) {
-    return this.prismaService.documentSubscription.delete({
+    const subscription = await this.prismaService.documentSubscription.delete({
       where: { id: subscriptionId },
     });
+
+    this.documentSubscriptionGateway.unsubscribeFromDocument(
+      subscription.userId,
+      subscription.documentId,
+    );
+
+    return subscription;
   }
 
   broadcastDocumentUpdate(documentId: string) {

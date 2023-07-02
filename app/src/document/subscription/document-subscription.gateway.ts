@@ -2,14 +2,14 @@ import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, UseGuards, forwardRef } from '@nestjs/common';
+import { Inject, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Cache } from 'cache-manager';
+import { AuthSocket } from '../../app/types';
+import { AuthenticationWSMiddleware } from '../../user/authentication/middlewares/authentication-ws.middleware';
 import { UserService } from '../../user/user.service';
 import { DocumentService } from '../document.service';
 import { DocumentSubscriptionService } from './document-subscription.service';
-import { AuthenticationWSMiddleware } from '../../user/authentication/middlewares/authentication-ws.middleware';
-import { AuthSocket } from '../../app/types';
 
 @WebSocketGateway({
   namespace: 'document-subscription',
@@ -65,7 +65,16 @@ export class DocumentSubscriptionGateway {
         client.user.id,
       );
     for (const subscription of subscriptions) {
+      console.log(`Joining ${subscription.documentId}`);
       client.join(subscription.documentId);
+
+      setTimeout(
+        () =>
+          this.server
+            .to(subscription.documentId)
+            .emit('new-subscription', subscription.documentId),
+        1000,
+      );
     }
   }
 
@@ -76,6 +85,10 @@ export class DocumentSubscriptionGateway {
     const socketId = socketToUserMap[userId];
     if (socketId) {
       this.server.sockets.sockets.get(socketId).join(documentId);
+      setTimeout(
+        () => this.server.to(documentId).emit('new-subscription', documentId),
+        1000,
+      );
     }
   }
 
@@ -86,6 +99,10 @@ export class DocumentSubscriptionGateway {
     const socketId = socketToUserMap[userId];
     if (socketId) {
       this.server.sockets.sockets.get(socketId).leave(documentId);
+      setTimeout(
+        () => this.server.to(documentId).emit('unsubscribed', documentId),
+        1000,
+      );
     }
   }
 
