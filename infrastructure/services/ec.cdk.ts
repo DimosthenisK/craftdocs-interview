@@ -1,5 +1,5 @@
-import * as ec from "aws-cdk-lib/aws-elasticache";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as ec from "aws-cdk-lib/aws-elasticache";
 
 import { Construct } from "constructs";
 
@@ -18,7 +18,6 @@ export class EcCdkConstruct extends Construct {
       vpc,
       securityGroupName: "craftdocs-ec-sg",
       description: "Security group for craftdocs EC (ElastiCache)",
-      allowAllOutbound: true,
     });
 
     const subnetGroup = new ec.CfnSubnetGroup(
