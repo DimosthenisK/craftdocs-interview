@@ -1,12 +1,13 @@
-import { GenericContainer, PostgreSqlContainer } from 'testcontainers';
 import { TestingModule, TestingModuleBuilder } from '@nestjs/testing';
+import { GenericContainer, PostgreSqlContainer } from 'testcontainers';
 
-import { AuthenticationService } from '../../../src/user/authentication/authentication.service';
-import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../../../src/prisma/prisma.service';
 import { PrismaTestingHelper } from '@chax-at/transactional-prisma-testing';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
 import { RedisIoAdapter } from '../../../src/app/lib';
 import { appValidationPipe } from '../../../src/app/pipes';
+import { PrismaService } from '../../../src/prisma/prisma.service';
+import { AuthenticationService } from '../../../src/user/authentication/authentication.service';
 import { getRandomFreePort } from './get-random-free-port';
 import { prismaReset } from './prisma-reset';
 
@@ -76,6 +77,8 @@ export const buildTest = async (
   prismaService = app.get(PrismaService);
   const authService = app.get(AuthenticationService);
 
+  const cacheManager = app.get(CACHE_MANAGER);
+
   await Promise.all([app.init()]);
 
   return {
@@ -83,18 +86,20 @@ export const buildTest = async (
     prismaService,
     authService,
     beforeAll: async () => {
-      await app.listen(0);
+      await app.listen(await getRandomFreePort());
     },
     beforeEach: async () => {
       await prismaTestingHelper.startNewTransaction();
     },
     afterEach: async () => {
       prismaTestingHelper.rollbackCurrentTransaction();
+      await cacheManager.set('socket-to-user-map', {}, 0);
     },
     afterAll: async () => {
       await prismaService.$disconnect();
       await app.close();
       await dbContainer.stop();
+      await redisContainer.stop();
     },
   };
 };
